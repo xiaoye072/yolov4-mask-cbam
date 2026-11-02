@@ -2,43 +2,61 @@
 
 深度学习课程设计：**基于 CBAM 注意力改进的 YOLOv4 校园口罩佩戴检测方法研究**
 
-仓库：https://github.com/xiaoye072/yolov4-mask-cbam
+- 教材方法：第 7 章 YOLOv4  
+- 改进手段：CBAM（教材 7.2.1 CBAM-CSPDarknet53）  
+- 类别：`with_mask` / `without_mask`  
+- 状态：已在 **真实 Face Mask Detection 数据** 上完成 baseline 与 CBAM 各 10 epoch CPU 训练；指标见 [`results_metrics.md`](./results_metrics.md)
+- **课程报告**：见 [`大作业报告.md`](./大作业报告.md)（完整可提交正文）
 
-- 教材方法：第 7 章 YOLOv4
-- 改进手段：CBAM（教材 7.2.1 CBAM-CSPDarknet53）
-- 类别：`with_mask` / `without_mask`
-- 状态：已在 **真实 Face Mask Detection 数据** 上完成 baseline 与 CBAM 各 10 epoch CPU 训练。数字只来自 `weights/*/summary.json` 与 `train_log.jsonl`，见 [`results_metrics.md`](./results_metrics.md)。本轮简化评估 **mAP@0.5 = 0**（TP=0），报告中不得改成非零。
+## 重要说明：教学简化版骨干
 
-## 克隆
+本仓库 `models/yolov4.py` 实现的是 **「教学简化版 YOLOv4-like」**，结构完整可读、可训练对比，但**不是**逐层复刻官方 CSPDarknet53 全宽网络：
 
-```bash
-git clone https://github.com/xiaoye072/yolov4-mask-cbam.git
-cd yolov4-mask-cbam
+| 模块 | 本仓库（简化） | 与教材/正式版对照 |
+|------|----------------|-------------------|
+| 骨干 | CSP 风格残差 + 跨阶段拼接，`width_mult=0.5` | 对应 CSPDarknet53 思想 |
+| 颈部 | SPP + 简化 FPN/PAN | 对应 SPP+PANet |
+| 检测头 | 三尺度 YOLO head | `(5+nc)*na` 输出 |
+| CBAM | `models/cbam.py`；骨干 P3/P4/P5 后插入（【CBAM 插入点】） | 对应教材 7.2.1 |
+
+## 目录结构
+
+```text
+yolov4-mask-cbam/
+├── README.md
+├── results_metrics.md       # 真实训练数字
+├── 大作业报告-实验数据.md
+├── 开题说明.md / 数据方案.md / 报告提纲.md
+├── requirements.txt
+├── train.py                 # 训练（--with-cbam / 验证 loss + 简化 mAP）
+├── configs/default.yaml
+├── models/                  # yolov4.py + cbam.py
+├── utils/                   # dataset / loss / metrics
+├── scripts/
+│   ├── convert_voc_to_yolo.py
+│   └── prepare_dataset.md
+├── data/
+│   ├── classes.names / mask.yaml
+│   ├── images/{train,val,test}/   # 大图默认 gitignore，需本地准备
+│   ├── labels/...
+│   └── samples/labels/            # 标注样例
+└── weights/{baseline,cbam}/       # *.pt 默认不入库；保留 summary/log
 ```
 
 ## 环境
 
-建议 Python 3.8+。
-
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate   # Windows: .venv\Scripts\activate
+cd yolov4-mask-cbam
+python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
+# 下载数据集时另需：pip install gdown
 ```
 
-有 GPU 时安装对应 CUDA 版 PyTorch，并把 `configs/default.yaml` 里的 `device` 改为 `cuda`（无 GPU 时 `train.py` 会回退到 CPU）。下载数据集时另需 `pip install gdown`。
+建议 Python 3.8+；有 GPU 时安装 CUDA 版 PyTorch，并将 `configs/default.yaml` 中 `device: cuda`。
 
-## 假数据冒烟（不代表真实训练）
+## 数据准备
 
-仓库不含图片。没有 `data/images/` 时，`train.py` 也会自动改用假数据；下面这条显式走通 1 个 epoch：
-
-```bash
-python train.py --epochs 1 --dummy --device cpu
-```
-
-## 准备真实数据并做 VOC → YOLO 转换
-
-标签已在仓库中（`data/labels/{train,val,test}`，seed=42 时为 **597 / 170 / 86**）。图片不入库，需要下载后放到同名路径，或重新转换。
+详见 [`scripts/prepare_dataset.md`](./scripts/prepare_dataset.md)。
 
 1. 下载 Face Mask Detection（Kaggle 或 Pseudo-Lab Drive 镜像）：
 
@@ -49,9 +67,8 @@ unzip Face_Mask_Detection.zip -d face-mask-raw
 ```
 
 原始出处：https://www.kaggle.com/datasets/andrewmvd/face-mask-detection  
-说明：[`scripts/prepare_dataset.md`](./scripts/prepare_dataset.md)
 
-2. VOC XML 转 YOLO，并按 seed=42 划分（`mask_weared_incorrect` 并入 `without_mask`）：
+2. 转为 YOLO 并划分（seed=42 → 597/170/86）：
 
 ```bash
 python scripts/convert_voc_to_yolo.py \
@@ -60,73 +77,56 @@ python scripts/convert_voc_to_yolo.py \
   --out data --seed 42 --train 0.7 --val 0.2 --test 0.1 --copy
 ```
 
-图片写入 `data/images/{train,val,test}/`（已被 `.gitignore` 排除）。期望划分仍是 train=597 / val=170 / test=86。
+`mask_weared_incorrect` 已并入 `without_mask`。
 
-## 训练：Baseline 与 CBAM
-
-两侧只差 `--with-cbam`，其余超参与已记录实验一致。`*.pt` 写在本地 `weights/`，不进入 Git。
+## 训练
 
 ```bash
+# 假数据冒烟
+python train.py --epochs 1 --dummy --device cpu
+
 # 基线
 python train.py --cfg configs/default.yaml --save-dir weights/baseline \
   --epochs 10 --img-size 320 --batch-size 4 --device cpu
 
-# CBAM（骨干 P3/P4/P5 后插入）
+# CBAM 改进（其余超参与基线一致）
 python train.py --cfg configs/default.yaml --with-cbam --save-dir weights/cbam \
   --epochs 10 --img-size 320 --batch-size 4 --device cpu
 ```
 
-每次运行写出 `last.pt`、`best.pt`（按最低 val_loss）、`train_log.jsonl`、`summary.json`。引用指标时只抄这些文件，不要手填 mAP。
+输出：`last.pt` / `best.pt`（最低 val_loss）/ `train_log.jsonl` / `summary.json`。
 
 ## 已跑通实验摘要（勿改数字）
 
-| 模型 | 参数量 | 耗时 (CPU) | best val_loss | 最终 train_loss | mAP@0.5 |
-|------|--------|------------|---------------|-----------------|---------|
-| Baseline | 14,879,359 | 452.7 s | 0.8532 | 0.8307 | 0.0 |
-| +CBAM | 14,922,661 | 493.0 s | 0.8245 | 0.8091 | 0.0 |
+| 模型 | 参数量 | 耗时(CPU) | best val_loss | 最终 train_loss |
+|------|--------|-----------|---------------|-----------------|
+| Baseline | 14,879,359 | 452.7 s | 0.8532 | 0.8307 |
+| +CBAM | 14,922,661 | 493.0 s | 0.8245 | 0.8091 |
 
-来源：`weights/baseline/summary.json`、`weights/cbam/summary.json`。Precision / Recall / mAP 由 `utils/metrics.py` 的简化 decode 统计；10 epoch、CPU、教学损失下 **TP=0**，所以检测指标是 0。可以对比的是参数量和 train/val loss，不能把 mAP 写成非零。逐 epoch 表见 [`results_metrics.md`](./results_metrics.md)。
+完整表与日志路径：[`results_metrics.md`](./results_metrics.md)。  
+简化 mAP 在本轮短训下为 0（诚实记录）；要报检测准确率请加长训练并完善评估。
 
-## 重要说明：教学简化版骨干
+## 仓库与推送
 
-`models/yolov4.py` 是 **教学简化版 YOLOv4-like**（`width_mult=0.5`），可读、可训练对比，**不是**逐层复刻官方 CSPDarknet53。
+`.gitignore` 已排除：`.venv/`、`weights/**/*.pt`、`data/images/**`、`data/labels/**`、zip。  
+保留代码、配置、文档、`weights/*/summary.json` 与 `train_log.jsonl`。
 
-| 模块 | 本仓库（简化） | 与教材/正式版对照 |
-|------|----------------|-------------------|
-| 骨干 | CSP 风格残差 + 跨阶段拼接，`width_mult=0.5` | 对应 CSPDarknet53 思想 |
-| 颈部 | SPP + 简化 FPN/PAN | 对应 SPP+PANet |
-| 检测头 | 三尺度 YOLO head | `(5+nc)*na` 输出 |
-| CBAM | `models/cbam.py`；骨干 P3/P4/P5 后插入 | 对应教材 7.2.1 |
+### 本地已 init 时创建 GitHub 仓库示例
 
-## 目录结构
-
-```text
-.
-├── README.md
-├── results_metrics.md          # 真实训练数字（mAP=0）
-├── 大作业报告-实验数据.md
-├── 开题说明.md / 数据方案.md / 报告提纲.md
-├── requirements.txt
-├── train.py
-├── configs/default.yaml
-├── models/                     # yolov4.py + cbam.py
-├── utils/                      # dataset / loss / metrics
-├── scripts/
-│   ├── convert_voc_to_yolo.py
-│   └── prepare_dataset.md
-├── data/
-│   ├── classes.names / mask.yaml
-│   ├── images/{train,val,test}/   # gitignore，需本地准备
-│   ├── labels/{train,val,test}/   # 已入库
-│   └── samples/labels/            # 标注样例
-└── weights/{baseline,cbam}/       # summary.json、train_log.jsonl、console 日志；*.pt 不入库
+```bash
+cd yolov4-mask-cbam
+git status
+# 若尚未登录：gh auth login
+gh repo create yolov4-mask-cbam --public --source=. --remote=origin --push
+# 或私有：--private
 ```
 
-## 哪些文件会进 Git
+Gitee：
 
-保留：代码、配置、脚本、文档、`data/labels/`、`data/samples/`、小型指标文件（`summary.json`、`train_log.jsonl`、`console.log`、`console_excerpt.log`）。
-
-`.gitignore` 排除：`*.pt`、`.venv/`、`data/images/`（仅留 `.gitkeep`）、压缩包与常见大二进制（图片、视频、归档）。
+```bash
+git remote add origin git@gitee.com:<你的用户名>/yolov4-mask-cbam.git
+git push -u origin main
+```
 
 ## 文档索引
 
@@ -135,6 +135,6 @@ python train.py --cfg configs/default.yaml --with-cbam --save-dir weights/cbam \
 | `开题说明.md` | 题目与范围 |
 | `数据方案.md` | 数据选型 |
 | `报告提纲.md` | 报告结构 |
+| `大作业报告.md` | **完整可提交课程报告** |
 | `大作业报告-实验数据.md` | 真实实验表草稿 |
-| `results_metrics.md` | 指标、命令与日志路径 |
-| `REPO_PUSH.md` | 本仓库地址与不入库内容 |
+| `results_metrics.md` | 指标与命令、日志路径 |
