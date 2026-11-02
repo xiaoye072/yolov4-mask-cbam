@@ -1,0 +1,35 @@
+# 默认训练配置 — 校园口罩检测（with_mask / without_mask）
+# 基线与改进模型仅 with_cbam 不同，其余保持一致以便对比。
+
+project: yolov4-mask-cbam
+num_classes: 2
+class_names:
+  - with_mask
+  - without_mask
+
+# 模型
+img_size: 320            # CPU 友好；有 GPU 可改 416
+width_mult: 0.5          # 教学简化骨干宽度系数；完整版可改为 1.0 并换结构
+with_cbam: false         # 也可被 CLI --with-cbam 覆盖
+num_anchors: 3
+
+# 数据（images/labels 分离目录，见 数据方案.md）
+data_root: data
+train_images: data/images/train
+train_labels: data/labels/train
+val_images: data/images/val
+val_labels: data/labels/val
+# 若目录为空，train.py 自动使用 DummyYOLODataset 跑通流程
+
+# 训练（CPU 短训默认；正式长训请加大 epochs）
+epochs: 10
+batch_size: 4
+lr: 0.001
+weight_decay: 0.0005
+num_workers: 2
+seed: 42
+device: cpu              # 有 GPU 时改为 cuda（无 GPU 时自动回退 cpu）
+
+# 输出
+save_dir: weights/baseline   # 使用 --with-cbam 时建议 weights/cbam
+save_period: 5

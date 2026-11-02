@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Trained weights (regenerate with train.py)
+*.pt
+*.pth
+*.onnx
+*.weights
+*.ckpt
+
+# Full images stay local. Labels, samples, and small metric logs/json stay in git.
+data/images/**
+!data/images/**/
+!data/images/**/.gitkeep
+
+# Large binaries and dataset archives
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.7z
+*.rar
+*.gz
+*.bin
+*.jpg
+*.jpeg
+*.png
+*.bmp
+*.gif
+*.webp
+*.tif
+*.tiff
+*.mp4
+*.avi
+*.mov
+*.mkv
+face-mask-raw/
+
+# OS
+.DS_Store

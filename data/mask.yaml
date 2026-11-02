@@ -1,0 +1,9 @@
+# YOLO 风格数据描述（本仓库 train.py 主要读 configs/default.yaml）
+path: data
+train: images/train
+val: images/val
+test: images/test
+names:
+  0: with_mask
+  1: without_mask
+nc: 2

@@ -1,0 +1,32 @@
+{
+  "with_cbam": false,
+  "device": "cpu",
+  "epochs": 10,
+  "batch_size": 4,
+  "img_size": 320,
+  "lr": 0.001,
+  "seed": 42,
+  "dummy": false,
+  "params": {
+    "total": 14879359,
+    "trainable": 14879359
+  },
+  "elapsed_sec": 452.72155952453613,
+  "best_val_loss": 0.8532336603763492,
+  "best_mAP50": 0.0,
+  "final": {
+    "epoch": 10,
+    "train_loss": 0.8307270071903865,
+    "with_cbam": false,
+    "params_total": 14879359,
+    "val_loss": 0.8648507615854574,
+    "precision": 0.0,
+    "recall": 0.0,
+    "mAP50": 0.0,
+    "tp": 0.0,
+    "fp": 155.0,
+    "n_gt": 838.0
+  },
+  "log_path": "/workspace/yolov4-mask-cbam/weights/baseline/train_log.jsonl",
+  "save_dir": "/workspace/yolov4-mask-cbam/weights/baseline"
+}

@@ -1,0 +1,10 @@
+{"epoch": 1, "train_loss": 1.3776288717985152, "with_cbam": false, "params_total": 14879359, "val_loss": 0.8892881613831187, "precision": 0.0, "recall": 0.0, "mAP50": 0.0, "tp": 0.0, "fp": 15.0, "n_gt": 838.0}
+{"epoch": 2, "train_loss": 0.8426773352424304, "with_cbam": false, "params_total": 14879359, "val_loss": 1.0799246596735577, "precision": 0.0, "recall": 0.0, "mAP50": 0.0, "tp": 0.0, "fp": 152.0, "n_gt": 838.0}
+{"epoch": 3, "train_loss": 0.8129872481028239, "with_cbam": false, "params_total": 14879359, "val_loss": 0.8655271044997281, "precision": 0.0, "recall": 0.0, "mAP50": 0.0, "tp": 0.0, "fp": 1.0, "n_gt": 838.0}
+{"epoch": 4, "train_loss": 0.861848042011261, "with_cbam": false, "params_total": 14879359, "val_loss": 0.9299198201922483, "precision": 0.0, "recall": 0.0, "mAP50": 0.0, "tp": 0.0, "fp": 690.0, "n_gt": 838.0}
+{"epoch": 5, "train_loss": 0.8378647382060687, "with_cbam": false, "params_total": 14879359, "val_loss": 1.089343165935472, "precision": 0.0, "recall": 0.0, "mAP50": 0.0, "tp": 0.0, "fp": 59.0, "n_gt": 838.0}
+{"epoch": 6, "train_loss": 0.8257454439004263, "with_cbam": false, "params_total": 14879359, "val_loss": 0.8532336603763492, "precision": 0.0, "recall": 0.0, "mAP50": 0.0, "tp": 0.0, "fp": 129.0, "n_gt": 838.0}
+{"epoch": 7, "train_loss": 0.8130725151300431, "with_cbam": false, "params_total": 14879359, "val_loss": 0.9539920348067616, "precision": 0.0, "recall": 0.0, "mAP50": 0.0, "tp": 0.0, "fp": 142.0, "n_gt": 838.0}
+{"epoch": 8, "train_loss": 0.8082766298453014, "with_cbam": false, "params_total": 14879359, "val_loss": 1.2292435591997102, "precision": 0.0, "recall": 0.0, "mAP50": 0.0, "tp": 0.0, "fp": 62.0, "n_gt": 838.0}
+{"epoch": 9, "train_loss": 0.7959156930446625, "with_cbam": false, "params_total": 14879359, "val_loss": 0.915304652480192, "precision": 0.0, "recall": 0.0, "mAP50": 0.0, "tp": 0.0, "fp": 166.0, "n_gt": 838.0}
+{"epoch": 10, "train_loss": 0.8307270071903865, "with_cbam": false, "params_total": 14879359, "val_loss": 0.8648507615854574, "precision": 0.0, "recall": 0.0, "mAP50": 0.0, "tp": 0.0, "fp": 155.0, "n_gt": 838.0}

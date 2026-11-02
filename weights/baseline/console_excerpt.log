@@ -1,0 +1,19 @@
+[train] device=cpu with_cbam=False img_size=320
+[train] params total=14879359 trainable=14879359
+[train] epochs=10 batches/epoch≈150 val_batches≈43 dummy=False
+[train] save_dir=/workspace/yolov4-mask-cbam/weights/baseline
+[train] epoch 1 train_loss=1.3776 val_loss=0.8893 P=0.0000 R=0.0000 mAP50=0.0000
+[train] new best.pt (val_loss=0.8893)
+[train] epoch 2 train_loss=0.8427 val_loss=1.0799 P=0.0000 R=0.0000 mAP50=0.0000
+[train] epoch 3 train_loss=0.8130 val_loss=0.8655 P=0.0000 R=0.0000 mAP50=0.0000
+[train] new best.pt (val_loss=0.8655)
+[train] epoch 4 train_loss=0.8618 val_loss=0.9299 P=0.0000 R=0.0000 mAP50=0.0000
+[train] epoch 5 train_loss=0.8379 val_loss=1.0893 P=0.0000 R=0.0000 mAP50=0.0000
+[train] epoch 6 train_loss=0.8257 val_loss=0.8532 P=0.0000 R=0.0000 mAP50=0.0000
+[train] new best.pt (val_loss=0.8532)
+[train] epoch 7 train_loss=0.8131 val_loss=0.9540 P=0.0000 R=0.0000 mAP50=0.0000
+[train] epoch 8 train_loss=0.8083 val_loss=1.2292 P=0.0000 R=0.0000 mAP50=0.0000
+[train] epoch 9 train_loss=0.7959 val_loss=0.9153 P=0.0000 R=0.0000 mAP50=0.0000
+[train] epoch 10 train_loss=0.8307 val_loss=0.8649 P=0.0000 R=0.0000 mAP50=0.0000
+[train] done elapsed=452.7s summary -> /workspace/yolov4-mask-cbam/weights/baseline/summary.json
+[train] (教学简化骨干；指标为同配置对比用，非官方 COCO mAP。)

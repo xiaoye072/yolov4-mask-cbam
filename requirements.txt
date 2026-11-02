@@ -1,0 +1,8 @@
+torch>=1.10
+torchvision>=0.11
+numpy>=1.19
+opencv-python-headless>=4.5
+Pillow>=8.0
+PyYAML>=5.4
+tqdm>=4.60
+lxml>=4.6
